@@ -47,17 +47,19 @@ function removeBgcolor (e) {
   
   inputData.addEventListener('input', inputValidator);
 
-  const a = new Date();
 
-  const currentDay = a.toDateString();
+
+  const currentDay = new Date();
 
   function inputValidator () {
-      console.log(inputData.value);
-      const b = inputData.value;
-      const c = b.toDateString();
-      console.log(Date.parse(c));
-      console.log(currentDay);
-      console.log(Date.parse(currentDay));
+const currentDayInMs = Date.parse(currentDay);
+const inputDataInMs = Date.parse(inputData.value);
+      console.log('currentDayInMs '+ currentDayInMs);
+      console.log('inputDataInMs '+ inputDataInMs);
+  
+      console.log(inputDataInMs - currentDayInMs);
+
+      if(currentDayInMs > inputDataInMs) { console.log("Please choose a date in the future");}
   }
 
   
