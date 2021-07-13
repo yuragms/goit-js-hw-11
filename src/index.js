@@ -13,8 +13,6 @@ const btnStop = document.querySelector('[data-stop]');
 const tagBody = document.querySelector('body');
 let timerId;
 
-console.log(btnStop);
-
 btnStart.addEventListener('click', addBgcolor);
 btnStop.addEventListener('click', removeBgcolor);
 
@@ -55,32 +53,20 @@ function removeBgcolor (e) {
   const hoursOutHtml = document.querySelector('[data-hours]');
   const daysOutHtml = document.querySelector('[data-days]');
   
-  
-  
+  const currentDay = new Date();
+
   let timeInterval;
   let dedline;
 
-
-
-
-
-  
   inputData.addEventListener('input', inputValidator);
   btnStart1.addEventListener('click', startTimer);
 
 
-
-  const currentDay = new Date();
-
   function inputValidator () {
-const currentDayInMs = Date.parse(currentDay);
-const inputDataInMs = Date.parse(inputData.value);
-  //  dedline = inputDataInMs - currentDayInMs;
-  dedline = 15000;
-
-
-      console.log('currentDayInMs '+ currentDayInMs);
-      console.log('inputDataInMs '+ inputDataInMs);
+     const currentDayInMs = Date.parse(currentDay);
+     const inputDataInMs = Date.parse(inputData.value);
+     dedline = inputDataInMs - currentDayInMs;
+    // dedline = 10000;
   
       console.log(dedline);
 
@@ -108,18 +94,23 @@ const inputDataInMs = Date.parse(inputData.value);
 
  function tick () {
   dedline -= 1000;
+  
    let getTime = convertMs(dedline);
    let seconds = getTime.seconds;
    let minutes = getTime.minutes;
    let hours = getTime.hours;
    let days = getTime.days; 
+   let secondsBeauty = seconds.toString().padStart(2,"0");
+   let minutesBeauty = minutes.toString().padStart(2,"0");
+   let hoursBeauty = hours.toString().padStart(2,"0");
+   let daysBeauty = days.toString().padStart(3,"0");
 
-   secondsOutHtml.innerHTML = `${seconds}`;
-   minutesOutHtml.innerHTML = `${minutes}`;
-   hoursOutHtml.innerHTML = `${hours}`;
-   daysOutHtml.innerHTML = `${days}`;
+   secondsOutHtml.innerHTML = `${secondsBeauty}`;
+   minutesOutHtml.innerHTML = `${minutesBeauty}`;
+   hoursOutHtml.innerHTML = `${hoursBeauty}`;
+   daysOutHtml.innerHTML = `${daysBeauty }`;
 
-   if (dedline = 0) {clearInterval(timeInterval);}
+   if (dedline === 0) {clearInterval(timeInterval);}
  }
 
   function convertMs(ms) {
@@ -141,7 +132,80 @@ const inputDataInMs = Date.parse(inputData.value);
     return { days, hours, minutes, seconds };
   }
   
-  console.log(convertMs(2000)); // {days: 0, hours: 0, minutes: 0, seconds: 2}
-  console.log(convertMs(140000)); //{days: 0, hours: 0, minutes: 2, seconds: 20}
-  console.log(convertMs(24140000)); // {days: 0, hours: 6, minutes: 42, seconds: 20}
-  
+ // <!--Задание 3 - Подзадание 1 -->
+ const delay = ms => { 
+  //  return new Promise((resolve) => setTimeout(resolve(ms), ms));
+
+  return new Promise((resolve) => {
+    setTimeout(() => {
+      resolve(ms);
+    }, ms);
+  });
+  // Change this function
+};
+
+const logger = time => console.log(`Fulfilled after ${time}ms`);
+
+// Tests
+delay(2000).then(logger); // Fulfilled after 2000ms
+delay(1000).then(logger); // Fulfilled after 1000ms
+delay(1500).then(logger); // Fulfilled after 1500ms
+
+
+// <!--Задание 3 - Подзадание 2 -->
+const users = [
+  { name: 'Mango', active: true },
+  { name: 'Poly', active: false },
+  { name: 'Ajax', active: false },
+];
+
+const toggleUserState = (allUsers, username) => {
+
+
+  return new Promise((resolve, reject) => {
+  const updatedUsers = allUsers.map(user =>
+    user.name === username ? { ...user, active: !user.active } : user
+  );
+    if (username) {
+      resolve(updatedUsers);
+    } else { 
+      reject(updatedUsers);
+    }
+  });
+};
+
+// The function should work like this
+toggleUserState(users, 'Mango').then(console.table);
+toggleUserState(users, 'Ajax').then(console.table);
+
+// <!--Задание 3 - Подзадание 3 -->
+
+const randomIntegerFromInterval = (min, max) => {
+  return Math.floor(Math.random() * (max - min + 1) + min);
+};
+
+const makeTransaction = (transaction, onSuccess, onError) => {
+  const delay = randomIntegerFromInterval(200, 500);
+
+  setTimeout(() => {
+    const canProcess = Math.random() > 0.3;
+
+    if (canProcess) {
+      onSuccess({ id: transaction.id, time: delay });
+    } else {
+      onError(transaction.id);
+    }
+  }, delay);
+};
+
+const logSuccess = ({ id, time }) => {
+  console.log(`Transaction ${id} processed in ${time}ms`);
+};
+
+const logError = id => {
+  console.warn(`Error processing transaction ${id}. Please try again later.`);
+};
+
+// Currently the function works like this
+makeTransaction({ id: 70, amount: 150 }, logSuccess, logError);
+makeTransaction({ id: 71, amount: 230 }, logSuccess, logError);
